@@ -23,6 +23,7 @@ public record CrawlReport(
 
     static CrawlReport from(
             String label,
+            int totalRequests,
             List<FetchResult> results,
             Duration wallClock,
             ResourceSnapshot resourceSnapshot,
@@ -63,11 +64,11 @@ public record CrawlReport(
 
         double requestsPerSecond = wallClock.isZero()
                 ? 0.0
-                : results.size() / (wallClock.toNanos() / 1_000_000_000.0);
+                : completedResults.size() / (wallClock.toNanos() / 1_000_000_000.0);
 
         return new CrawlReport(
                 label,
-                results.size(),
+                totalRequests,
                 completedResults.size(),
                 successCount,
                 failureCount,

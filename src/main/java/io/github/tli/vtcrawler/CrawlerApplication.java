@@ -1,7 +1,7 @@
 package io.github.tli.vtcrawler;
 
-import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,6 +19,7 @@ public final class CrawlerApplication {
 
         switch (options.command()) {
             case "crawl" -> runSingleMode("virtual-threads", options, false);
+            case "crawl-site" -> runSiteCrawlMode("site-crawl", options);
             case "compare" -> runCompareMode(options);
             case "demo-local" -> runLocalDemo(options);
             default -> throw new IllegalArgumentException("Unsupported command: " + options.command());
@@ -70,17 +71,45 @@ public final class CrawlerApplication {
         System.out.println(CrawlReportComparison.summarize(virtualReport, platformReport));
     }
 
+    private static void runSiteCrawlMode(String label, CommandOptions options) throws Exception {
+        if (options.baseUrl() == null || options.baseUrl().isBlank()) {
+            throw new IllegalArgumentException("Missing required option --url for command " + options.command());
+        }
+
+        HttpClientFactory httpClientFactory = new HttpClientFactory(options.connectTimeout(), options.userAgent());
+        SiteCrawlRequest request = new SiteCrawlRequest(
+                URI.create(options.baseUrl()),
+                options.maxPages(),
+                options.maxDepth(),
+                options.parallelism(),
+                options.requestTimeout(),
+                options.scopeTimeout(),
+                options.sameHostOnly(),
+                options.samplePages(),
+                options.userAgent(),
+                options.honorRobotsTxt(),
+                options.maxConcurrentPerHost(),
+                options.minHostDelay(),
+                options.jsonlOutputPath());
+        SiteCrawlReport report = SiteCrawlerEngine.crawl(label, httpClientFactory, request);
+        System.out.println(report.toPrettyString());
+    }
+
     private static void runLocalDemo(CommandOptions options) throws Exception {
         try (LocalTestServer server = LocalTestServer.start(
                 options.serverPort(),
                 options.serverDelay(),
                 options.payloadBytes())) {
-            URI baseUri = server.baseUri().resolve("/page");
-            CommandOptions overridden = options.withBaseUrl(baseUri.toString());
-            if (options.compare()) {
-                runCompareMode(overridden);
+            if (options.site()) {
+                runSiteCrawlMode("site-crawl", options.withBaseUrl(server.baseUri().resolve("/site").toString()));
             } else {
-                runSingleMode("virtual-threads", overridden, false);
+                URI baseUri = server.baseUri().resolve("/page");
+                CommandOptions overridden = options.withBaseUrl(baseUri.toString());
+                if (options.compare()) {
+                    runCompareMode(overridden);
+                } else {
+                    runSingleMode("virtual-threads", overridden, false);
+                }
             }
         }
     }
@@ -108,10 +137,20 @@ public final class CrawlerApplication {
             Duration scopeTimeout,
             int platformThreads,
             String userAgent,
+            int maxPages,
+            int maxDepth,
+            int parallelism,
+            int maxConcurrentPerHost,
+            Duration minHostDelay,
             int serverPort,
             Duration serverDelay,
             int payloadBytes,
-            boolean compare) {
+            boolean compare,
+            boolean site,
+            boolean sameHostOnly,
+            int samplePages,
+            boolean honorRobotsTxt,
+            Path jsonlOutputPath) {
 
         private static CommandOptions from(Arguments arguments) {
             String command = arguments.command();
@@ -124,10 +163,20 @@ public final class CrawlerApplication {
                     Duration.ofSeconds(arguments.getInt("timeout-seconds", 120)),
                     arguments.getInt("platform-threads", 200),
                     arguments.get("user-agent", "vt-crawler/1.0"),
+                    arguments.getInt("max-pages", 500),
+                    arguments.getInt("max-depth", 2),
+                    arguments.getInt("parallelism", 200),
+                    arguments.getInt("max-concurrent-per-host", 8),
+                    Duration.ofMillis(arguments.getInt("min-host-delay-millis", 0)),
                     arguments.getInt("server-port", 0),
                     Duration.ofMillis(arguments.getInt("server-delay-millis", 25)),
                     arguments.getInt("payload-bytes", 1_024),
-                    arguments.hasFlag("compare"));
+                    arguments.hasFlag("compare"),
+                    arguments.hasFlag("site"),
+                    !arguments.hasFlag("allow-cross-host"),
+                    arguments.getInt("sample-pages", 10),
+                    !arguments.hasFlag("ignore-robots"),
+                    arguments.get("jsonl-output") == null ? null : Path.of(arguments.get("jsonl-output")));
         }
 
         private CommandOptions withBaseUrl(String overriddenBaseUrl) {
@@ -140,10 +189,20 @@ public final class CrawlerApplication {
                     scopeTimeout,
                     platformThreads,
                     userAgent,
+                    maxPages,
+                    maxDepth,
+                    parallelism,
+                    maxConcurrentPerHost,
+                    minHostDelay,
                     serverPort,
                     serverDelay,
                     payloadBytes,
-                    compare);
+                    compare,
+                    site,
+                    sameHostOnly,
+                    samplePages,
+                    honorRobotsTxt,
+                    jsonlOutputPath);
         }
     }
 
@@ -170,7 +229,11 @@ public final class CrawlerApplication {
                 if (equalsIndex >= 0) {
                     values.put(raw.substring(0, equalsIndex), raw.substring(equalsIndex + 1));
                 } else {
-                    values.put(raw, "true");
+                    if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
+                        values.put(raw, args[++i]);
+                    } else {
+                        values.put(raw, "true");
+                    }
                 }
             }
             return new Arguments(command, values);

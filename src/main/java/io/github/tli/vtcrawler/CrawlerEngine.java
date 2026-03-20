@@ -57,7 +57,13 @@ public final class CrawlerEngine {
         }
 
         ResourceSnapshot snapshot = sampler.stop();
-        return CrawlReport.from(label, results, Duration.ofNanos(System.nanoTime() - startNanos), snapshot, scopeFailure);
+        return CrawlReport.from(
+                label,
+                targets.size(),
+                results,
+                Duration.ofNanos(System.nanoTime() - startNanos),
+                snapshot,
+                scopeFailure);
     }
 
     public static CrawlReport crawlWithPlatformThreadPool(
@@ -89,7 +95,13 @@ public final class CrawlerEngine {
         }
 
         ResourceSnapshot snapshot = sampler.stop();
-        return CrawlReport.from(label, results, Duration.ofNanos(System.nanoTime() - startNanos), snapshot, scopeFailure);
+        return CrawlReport.from(
+                label,
+                targets.size(),
+                results,
+                Duration.ofNanos(System.nanoTime() - startNanos),
+                snapshot,
+                scopeFailure);
     }
 
     private static List<FetchResult> submitAndCollect(

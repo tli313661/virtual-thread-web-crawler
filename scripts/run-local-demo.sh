@@ -10,4 +10,8 @@ if [[ "$MODE" == "compare" ]]; then
   exec java --enable-preview -cp "$ROOT_DIR/out" io.github.tli.vtcrawler.CrawlerApplication demo-local --compare
 fi
 
+if [[ "$MODE" == "site" ]]; then
+  exec java --enable-preview -cp "$ROOT_DIR/out" io.github.tli.vtcrawler.CrawlerApplication demo-local --site
+fi
+
 exec java --enable-preview -cp "$ROOT_DIR/out" io.github.tli.vtcrawler.CrawlerApplication demo-local
