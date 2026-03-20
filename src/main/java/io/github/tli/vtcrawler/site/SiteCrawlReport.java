@@ -1,5 +1,6 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.site;
 
+import io.github.tli.vtcrawler.support.ResourceSnapshot;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.Duration;

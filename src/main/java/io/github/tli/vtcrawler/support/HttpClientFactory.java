@@ -1,4 +1,4 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.support;
 
 import java.net.http.HttpClient;
 import java.time.Duration;

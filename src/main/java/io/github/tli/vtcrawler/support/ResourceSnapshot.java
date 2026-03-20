@@ -1,4 +1,4 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.support;
 
 public record ResourceSnapshot(
         long peakHeapUsedBytes,

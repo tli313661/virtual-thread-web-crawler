@@ -1,4 +1,4 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.site;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;

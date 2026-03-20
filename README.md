@@ -58,23 +58,23 @@
 
 - `src/main/java/io/github/tli/vtcrawler/CrawlerApplication.java`
   命令行入口
-- `src/main/java/io/github/tli/vtcrawler/CrawlerEngine.java`
+- `src/main/java/io/github/tli/vtcrawler/benchmark/CrawlerEngine.java`
   benchmark 模式的批量抓取执行器
-- `src/main/java/io/github/tli/vtcrawler/SiteCrawlerEngine.java`
+- `src/main/java/io/github/tli/vtcrawler/site/SiteCrawlerEngine.java`
   站点级抓取骨架
-- `src/main/java/io/github/tli/vtcrawler/HtmlLinkExtractor.java`
+- `src/main/java/io/github/tli/vtcrawler/site/HtmlLinkExtractor.java`
   简单 HTML 链接与标题提取器
-- `src/main/java/io/github/tli/vtcrawler/UrlNormalizer.java`
+- `src/main/java/io/github/tli/vtcrawler/site/UrlNormalizer.java`
   URL 归一化与过滤
-- `src/main/java/io/github/tli/vtcrawler/RobotsService.java`
+- `src/main/java/io/github/tli/vtcrawler/site/RobotsService.java`
   `robots.txt` 获取、解析和缓存
-- `src/main/java/io/github/tli/vtcrawler/HostThrottle.java`
+- `src/main/java/io/github/tli/vtcrawler/site/HostThrottle.java`
   host 级并发 / 节流控制
-- `src/main/java/io/github/tli/vtcrawler/JsonLinesPageWriter.java`
+- `src/main/java/io/github/tli/vtcrawler/site/JsonLinesPageWriter.java`
   JSON Lines 输出
-- `src/main/java/io/github/tli/vtcrawler/LocalTestServer.java`
+- `src/main/java/io/github/tli/vtcrawler/demo/LocalTestServer.java`
   本地 benchmark 服务和本地站点 demo
-- `src/main/java/io/github/tli/vtcrawler/ResourceSampler.java`
+- `src/main/java/io/github/tli/vtcrawler/support/ResourceSampler.java`
   资源采样
 
 ## 运行要求

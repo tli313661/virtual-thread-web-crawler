@@ -1,5 +1,6 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.benchmark;
 
+import io.github.tli.vtcrawler.support.ResourceSnapshot;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;

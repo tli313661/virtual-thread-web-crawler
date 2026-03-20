@@ -1,4 +1,4 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.demo;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;

@@ -1,5 +1,8 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.benchmark;
 
+import io.github.tli.vtcrawler.support.HttpClientFactory;
+import io.github.tli.vtcrawler.support.ResourceSampler;
+import io.github.tli.vtcrawler.support.ResourceSnapshot;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;

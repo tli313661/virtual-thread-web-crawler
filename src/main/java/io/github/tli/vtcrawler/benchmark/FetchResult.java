@@ -1,4 +1,4 @@
-package io.github.tli.vtcrawler;
+package io.github.tli.vtcrawler.benchmark;
 
 import java.net.URI;
 import java.time.Duration;
